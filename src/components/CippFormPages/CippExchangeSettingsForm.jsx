@@ -20,6 +20,7 @@ import { useSettings } from "../../hooks/use-settings";
 import { Grid } from "@mui/system";
 import { CippApiResults } from "../CippComponents/CippApiResults";
 import { useWatch } from "react-hook-form";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 const CippExchangeSettingsForm = (props) => {
   const userSettingsDefaults = useSettings();
@@ -27,6 +28,31 @@ const CippExchangeSettingsForm = (props) => {
   // State to manage the expanded panels
   const [expandedPanel, setExpandedPanel] = useState(null);
   const [relatedQueryKeys, setRelatedQueryKeys] = useState([]);
+
+  // Watch the Auto Reply State value
+  const autoReplyState = useWatch({
+    control: formControl.control,
+    name: "ooo.AutoReplyState",
+  });
+
+  // Calculate if date fields should be disabled
+  const areDateFieldsDisabled = autoReplyState?.value !== "Scheduled";
+  
+  useEffect(() => {
+    console.log('Auto Reply State changed:', {
+      autoReplyState,
+      areDateFieldsDisabled,
+      fullFormValues: formControl.getValues()
+    });
+  }, [autoReplyState]);
+
+  // Add debug logging for form values
+  useEffect(() => {
+    const subscription = formControl.watch((value, { name, type }) => {
+      console.log('Form value changed:', { name, type, value });
+    });
+    return () => subscription.unsubscribe();
+  }, [formControl]);
 
   const handleExpand = (panel) => {
     setExpandedPanel((prev) => (prev === panel ? null : panel));
@@ -198,20 +224,36 @@ const CippExchangeSettingsForm = (props) => {
               />
             </Grid>
             <Grid item size={6}>
-              <CippFormComponent
-                type="datePicker"
-                label="Start Date/Time"
-                name="ooo.StartTime"
-                formControl={formControl}
-              />
+              <Tooltip 
+                title={areDateFieldsDisabled ? "Scheduling is only available when Auto Reply State is set to Scheduled" : ""}
+                placement="bottom"
+              >
+                <Box>
+                  <CippFormComponent
+                    type="datePicker"
+                    label="Start Date/Time"
+                    name="ooo.StartTime"
+                    formControl={formControl}
+                    disabled={areDateFieldsDisabled}
+                  />
+                </Box>
+              </Tooltip>
             </Grid>
             <Grid item size={6}>
-              <CippFormComponent
-                type="datePicker"
-                label="End Date/Time"
-                name="ooo.EndTime"
-                formControl={formControl}
-              />
+              <Tooltip 
+                title={areDateFieldsDisabled ? "Scheduling is only available when Auto Reply State is set to Scheduled" : ""}
+                placement="bottom"
+              >
+                <Box>
+                  <CippFormComponent
+                    type="datePicker"
+                    label="End Date/Time"
+                    name="ooo.EndTime"
+                    formControl={formControl}
+                    disabled={areDateFieldsDisabled}
+                  />
+                </Box>
+              </Tooltip>
             </Grid>
             <Grid item size={12}>
               <CippFormComponent
@@ -295,7 +337,9 @@ const CippExchangeSettingsForm = (props) => {
                 alignItems: "center",
                 display: "flex",
                 justifyContent: "space-between",
-                p: 2,
+                py: 3,
+                pl: 2,
+                pr: 4,
                 cursor: "pointer",
                 "&:hover": {
                   bgcolor: "action.hover",
@@ -338,7 +382,7 @@ const CippExchangeSettingsForm = (props) => {
                   transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
                 }}
               >
-                <ExpandMoreIcon />
+                <ChevronDownIcon />
               </SvgIcon>
             </Box>
             <Collapse in={isExpanded} unmountOnExit>
