@@ -20,7 +20,6 @@ import React from "react";
 import { CippTableDialog } from "./CippTableDialog";
 import { EyeIcon } from "@heroicons/react/24/outline";
 import { useDialog } from "../../hooks/use-dialog";
-import { useRouter } from "next/router";
 
 const extractAllResults = (data) => {
   const results = [];
@@ -285,31 +284,31 @@ export const CippApiResults = (props) => {
                           color="secondary"
                           startIcon={<Help />}
                           onClick={() => {
-                            const searchUrl = `https://docs.cipp.app/?q=Help+with:+${encodeURIComponent(resultObj.copyField || resultObj.text)}&ask=true`;
-                            window.open(searchUrl, '_blank');
+                            const searchUrl = `https://docs.cipp.app/?q=Help+with:+${encodeURIComponent(
+                              resultObj.copyField || resultObj.text
+                            )}&ask=true`;
+                            window.open(searchUrl, "_blank");
                           }}
-                          sx={{ 
+                          sx={{
                             ml: 1,
                             mr: 1,
-                            backgroundColor: 'white',
-                            color: 'error.main',
-                            '&:hover': {
-                              backgroundColor: 'grey.100',
+                            backgroundColor: "white",
+                            color: "error.main",
+                            "&:hover": {
+                              backgroundColor: "grey.100",
                             },
                             py: 0.5,
                             px: 1,
-                            minWidth: 'auto',
-                            fontSize: '0.875rem',
-                            whiteSpace: 'nowrap'
+                            minWidth: "auto",
+                            fontSize: "0.875rem",
+                            whiteSpace: "nowrap",
                           }}
                         >
                           Get Help
                         </Button>
                       )}
                       <CippCopyToClipBoard text={resultObj.copyField || resultObj.text} />
-                      {resultObj.severity === "error" && (
-                        <CippDocsLookup text={resultObj.copyField || resultObj.text} />
-                      )}
+
                       <IconButton
                         aria-label="close"
                         color="inherit"
